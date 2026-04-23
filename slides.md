@@ -1436,12 +1436,30 @@ flowchart LR
 
 # <span class="term" data-zh="工具使用">Tool Use</span>：AI 是如何"操作电脑"的？
 
-<div class="pt-2 text-sm opacity-80">
+<div class="grid grid-cols-[0.8fr_1.2fr] gap-5 pt-3 items-start">
+
+<div>
+
+<div class="text-sm opacity-80 leading-relaxed">
 很多人第一次看到 AI 自己点浏览器、自己写文件、自己调 <span class="term" data-zh="应用程序编程接口">API</span>，会觉得"它怎么突然活了"。<br/>
 其实原理出奇地简单——
 </div>
 
-<div class="pt-4">
+<div class="mt-5 space-y-3 text-sm leading-snug">
+
+<div class="p-3 rounded bg-gray-500 bg-opacity-10">
+<b>关键 1</b>：工具提前"注册"给模型，附带说明书（名字、参数、能干嘛）。
+</div>
+
+<div class="p-3 rounded bg-gray-500 bg-opacity-10">
+<b>关键 2</b>：模型输出"我要调某工具"后，由<b>外部程序</b>真正去执行。
+</div>
+
+</div>
+
+</div>
+
+<div class="tool-use-diagram">
 
 ```mermaid {scale: 0.68}
 sequenceDiagram
@@ -1457,16 +1475,6 @@ sequenceDiagram
   M->>U: "上周一共 128 单。"
 ```
 
-</div>
-
-<div class="pt-4 grid grid-cols-2 gap-6 text-sm">
-
-<div class="p-3 rounded bg-gray-500 bg-opacity-10">
-<b>关键 1</b>：工具提前"注册"给模型，附带说明书（名字、参数、能干嘛）。
-</div>
-
-<div class="p-3 rounded bg-gray-500 bg-opacity-10">
-<b>关键 2</b>：模型输出"我要调某工具"这段文字后，由<b>外部程序</b>真正去执行。
 </div>
 
 </div>
