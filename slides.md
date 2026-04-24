@@ -461,60 +461,71 @@ def 是不是猫(图):
 
 # 从生物神经元到人工神经网络
 
-<div class="grid grid-cols-2 gap-5 pt-1 text-sm">
-
-<div class="bridge-card rounded-xl p-4">
-
-### 🧠 人类神经元与大脑
-
-<div class="bridge-copy opacity-80 pt-1">
-神经元接收来自其他神经元的电化学信号。信号足够强时，神经元会被激活，并把信号继续传给下游神经元。
+<div class="text-sm opacity-75 -mt-1">
+人脑是生物系统，神经网络是数学函数——它们在<b>结构</b>和<b>学习方式</b>上一一对应。
 </div>
 
-<div class="bridge-flow pt-3">
-  <div class="bridge-step bio"><b>1. 感官输入</b><span class="opacity-65">图像、声音、触觉</span></div>
-  <div class="bridge-step bio"><b>2. 神经元放电</b><span class="opacity-65">信号超过阈值</span></div>
-  <div class="bridge-step bio"><b>3. 回路协作</b><span class="opacity-65">多个脑区参与</span></div>
-  <div class="bridge-step bio"><b>4. 行为判断</b><span class="opacity-65">识别、决策、记忆</span></div>
+<div class="bridge-section-label pt-3">
+🧠 生物神经元 　↕　 ⚙️ 人工神经元 ：四个对应阶段
 </div>
 
-<div class="pt-3 font-bold">学习过程</div>
-<ul class="bridge-list pl-5 list-disc opacity-85">
-  <li>反复经历同类输入，相关神经回路更容易被激活。</li>
-  <li>反馈会改变神经元之间的连接强度，也就是「突触可塑性」。</li>
-  <li>练习越多，某些判断或动作越稳定，最终形成记忆和技能。</li>
-</ul>
-
+<div class="bridge-grid">
+  <div class="bridge-col">
+    <div class="bridge-stage">① 输入</div>
+    <div class="bridge-cell bio"><b>感官输入</b><span>图像、声音、触觉</span></div>
+    <div class="bridge-link">↕</div>
+    <div class="bridge-cell ai"><b>数据输入</b><span>像素、文本、特征</span></div>
+  </div>
+  <div class="bridge-col">
+    <div class="bridge-stage">② 激活</div>
+    <div class="bridge-cell bio"><b>神经元放电</b><span>信号超过阈值</span></div>
+    <div class="bridge-link">↕</div>
+    <div class="bridge-cell ai"><b>加权求和</b><span>Σwᵢxᵢ+b → 激活函数</span></div>
+  </div>
+  <div class="bridge-col">
+    <div class="bridge-stage">③ 协作</div>
+    <div class="bridge-cell bio"><b>回路协作</b><span>多个脑区参与</span></div>
+    <div class="bridge-link">↕</div>
+    <div class="bridge-cell ai"><b>多层传递</b><span>逐层提取抽象特征</span></div>
+  </div>
+  <div class="bridge-col">
+    <div class="bridge-stage">④ 输出</div>
+    <div class="bridge-cell bio"><b>行为判断</b><span>识别、决策、记忆</span></div>
+    <div class="bridge-link">↕</div>
+    <div class="bridge-cell ai"><b>输出预测</b><span>分类、文本、动作</span></div>
+  </div>
 </div>
 
-<div class="bridge-card rounded-xl p-4">
-
-### ⚙️ 人工神经元与深度神经网络
-
-<div class="bridge-copy opacity-80 pt-1">
-人工神经元把输入数字乘以权重，再加总、加偏置、过激活函数，得到一个输出。很多层叠起来，就是深度神经网络。
+<div class="bridge-section-label pt-4">
+🧠 学习过程 　↕　 ⚙️ 训练过程 ：怎么变得更准
 </div>
 
-<div class="bridge-flow pt-3">
-  <div class="bridge-step ai"><b>1. 数据输入</b><span class="opacity-65">像素、文本、特征</span></div>
-  <div class="bridge-step ai"><b>2. 加权求和</b><span class="opacity-65">Σwᵢxᵢ + b</span></div>
-  <div class="bridge-step ai"><b>3. 多层传递</b><span class="opacity-65">提取抽象特征</span></div>
-  <div class="bridge-step ai"><b>4. 输出预测</b><span class="opacity-65">分类、文本、动作</span></div>
+<div class="learn-grid">
+  <div class="learn-pair">
+    <div class="learn-bio"><b>反复经历同类输入</b><span>相关神经回路更易被激活</span></div>
+    <div class="learn-arrow">↕</div>
+    <div class="learn-ai"><b>反复喂入训练样本</b><span>每轮算预测与答案的差距</span></div>
+  </div>
+  <div class="learn-pair">
+    <div class="learn-bio"><b>突触可塑性</b><span>反馈改变神经元间连接强度</span></div>
+    <div class="learn-arrow">↕</div>
+    <div class="learn-ai"><b>反向传播 + 梯度下降</b><span>误差分摊回每个权重</span></div>
+  </div>
+  <div class="learn-pair">
+    <div class="learn-bio"><b>形成记忆与技能</b><span>判断/动作越来越稳定</span></div>
+    <div class="learn-arrow">↕</div>
+    <div class="learn-ai"><b>模型逐步收敛</b><span>错误越来越小</span></div>
+  </div>
 </div>
 
-<div class="pt-3 font-bold">训练过程</div>
-<ul class="bridge-list pl-5 list-disc opacity-85">
-  <li>先让模型对训练样本做预测，再计算预测和答案之间的误差。</li>
-  <li>误差通过反向传播分摊到每个参数上。</li>
-  <li>梯度下降把权重稍微调小或调大，重复很多轮后，错误逐步变小。</li>
-</ul>
-
+<div class="bridge-pillars pt-4">
+  <div class="bridge-pillar">大量简单单元</div>
+  <div class="bridge-pillar">可调整连接</div>
+  <div class="bridge-pillar">反复反馈学习</div>
 </div>
 
-</div>
-
-<div class="bridge-note mt-2 pl-3 text-xs opacity-75">
-这个类比只帮助建立直觉：人脑是生物系统，人工神经网络是数学函数；相似点在于「大量简单单元 + 可调整连接 + 反复反馈学习」。
+<div class="text-xs opacity-60 text-center pt-1.5">
+类比仅帮助建立直觉——这三点，就是它成立的全部支点。
 </div>
 
 ---
