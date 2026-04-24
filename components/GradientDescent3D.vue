@@ -33,6 +33,9 @@ const failed = ref(false)
 let renderer: THREE.WebGLRenderer | undefined
 let frameId = 0
 let resizeObserver: ResizeObserver | undefined
+let intersectionObserver: IntersectionObserver | undefined
+let contextLostHandler: ((e: Event) => void) | undefined
+let contextRestoredHandler: (() => void) | undefined
 const lossHeight = 0.9
 
 function gaussian(x: number, z: number, cx: number, cz: number, sx: number, sz: number, amp: number) {
@@ -260,12 +263,21 @@ onMounted(() => {
     if (clientWidth === 0 || clientHeight === 0) return
     camera.aspect = clientWidth / clientHeight
     camera.updateProjectionMatrix()
-    renderer.setSize(clientWidth, clientHeight, false)
+    renderer.setSize(clientWidth, clientHeight)
   }
 
   resizeObserver = new ResizeObserver(resize)
   resizeObserver.observe(el)
   resize()
+
+  if (typeof IntersectionObserver !== 'undefined') {
+    intersectionObserver = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) resize()
+      }
+    })
+    intersectionObserver.observe(el)
+  }
 
   const animate = (time: number) => {
     try {
@@ -276,6 +288,13 @@ onMounted(() => {
       markerHalo.position.y += 0.01
       group.rotation.y = -0.2 + Math.sin(time * 0.00035) * 0.16
       if (renderer && el.clientWidth > 0 && el.clientHeight > 0) {
+        const canvas = renderer.domElement
+        const dpr = renderer.getPixelRatio()
+        const targetW = Math.floor(el.clientWidth * dpr)
+        const targetH = Math.floor(el.clientHeight * dpr)
+        if (canvas.width !== targetW || canvas.height !== targetH) {
+          resize()
+        }
         renderer.render(scene, camera)
       }
       frameId = requestAnimationFrame(animate)
@@ -285,12 +304,31 @@ onMounted(() => {
     }
   }
 
+  const canvasEl = renderer.domElement
+  contextLostHandler = (event: Event) => {
+    event.preventDefault()
+    cancelAnimationFrame(frameId)
+  }
+  contextRestoredHandler = () => {
+    resize()
+    frameId = requestAnimationFrame(animate)
+  }
+  canvasEl.addEventListener('webglcontextlost', contextLostHandler as EventListener)
+  canvasEl.addEventListener('webglcontextrestored', contextRestoredHandler)
+
   frameId = requestAnimationFrame(animate)
 })
 
 onBeforeUnmount(() => {
   cancelAnimationFrame(frameId)
   resizeObserver?.disconnect()
+  intersectionObserver?.disconnect()
+  if (renderer && contextLostHandler) {
+    renderer.domElement.removeEventListener('webglcontextlost', contextLostHandler as EventListener)
+  }
+  if (renderer && contextRestoredHandler) {
+    renderer.domElement.removeEventListener('webglcontextrestored', contextRestoredHandler)
+  }
   renderer?.dispose()
   renderer?.domElement.remove()
 })
@@ -309,6 +347,12 @@ onBeforeUnmount(() => {
 .gd3d-canvas {
   width: 100%;
   height: 100%;
+}
+
+.gd3d-canvas canvas {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
 }
 
 .gd3d-label {

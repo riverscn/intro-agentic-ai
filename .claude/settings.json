@@ -4,7 +4,8 @@
       "Bash(grep -n \"^---$\" /Users/river/Developments/intro-AI/slides.md)",
       "WebFetch(domain:mariozechner.at)",
       "Bash(grep -n \"^# \\\\|^## \\\\|^---$\" /Users/river/Developments/intro-AI/slides.md)",
-      "Bash(git add *)"
+      "Bash(git add *)",
+      "Bash(npx vue-tsc *)"
     ]
   }
 }
