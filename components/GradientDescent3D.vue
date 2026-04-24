@@ -1,6 +1,7 @@
 <template>
   <div class="gd3d">
     <div ref="mountEl" class="gd3d-canvas" aria-label="3D 梯度下降动画"></div>
+    <div v-if="failed" class="gd3d-fallback">当前浏览器未能初始化 3D 画面（WebGL 不可用）</div>
     <div class="gd3d-label top">高损失山峰</div>
     <div class="gd3d-label bottom">局部低谷</div>
     <svg class="gd3d-axes" viewBox="0 0 130 80" aria-hidden="true">
@@ -27,6 +28,7 @@ import { onBeforeUnmount, onMounted, ref } from 'vue'
 import * as THREE from 'three'
 
 const mountEl = ref<HTMLDivElement | null>(null)
+const failed = ref(false)
 
 let renderer: THREE.WebGLRenderer | undefined
 let frameId = 0
@@ -155,6 +157,14 @@ onMounted(() => {
   const el = mountEl.value
   if (!el) return
 
+  try {
+    renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false })
+  } catch (err) {
+    console.warn('[GradientDescent3D] WebGL unavailable:', err)
+    failed.value = true
+    return
+  }
+
   const scene = new THREE.Scene()
   scene.background = new THREE.Color(0xf8fafc)
 
@@ -162,9 +172,8 @@ onMounted(() => {
   camera.position.set(5.1, 4.2, 6.4)
   camera.lookAt(0, 1.0, 0)
 
-  renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false })
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-  renderer.setSize(el.clientWidth, el.clientHeight)
+  renderer.setSize(Math.max(1, el.clientWidth), Math.max(1, el.clientHeight))
   el.appendChild(renderer.domElement)
 
   scene.add(new THREE.HemisphereLight(0xffffff, 0xdbeafe, 1.8))
@@ -248,6 +257,7 @@ onMounted(() => {
   function resize() {
     if (!renderer || !mountEl.value) return
     const { clientWidth, clientHeight } = mountEl.value
+    if (clientWidth === 0 || clientHeight === 0) return
     camera.aspect = clientWidth / clientHeight
     camera.updateProjectionMatrix()
     renderer.setSize(clientWidth, clientHeight, false)
@@ -258,14 +268,21 @@ onMounted(() => {
   resize()
 
   const animate = (time: number) => {
-    const t = (time * 0.00012) % 1
-    marker.position.copy(pathCurve.getPointAt(t))
-    marker.position.y += 0.03 + Math.sin(time * 0.006) * 0.025
-    markerHalo.position.copy(marker.position)
-    markerHalo.position.y += 0.01
-    group.rotation.y = -0.2 + Math.sin(time * 0.00035) * 0.16
-    renderer?.render(scene, camera)
-    frameId = requestAnimationFrame(animate)
+    try {
+      const t = (time * 0.00012) % 1
+      marker.position.copy(pathCurve.getPointAt(t))
+      marker.position.y += 0.03 + Math.sin(time * 0.006) * 0.025
+      markerHalo.position.copy(marker.position)
+      markerHalo.position.y += 0.01
+      group.rotation.y = -0.2 + Math.sin(time * 0.00035) * 0.16
+      if (renderer && el.clientWidth > 0 && el.clientHeight > 0) {
+        renderer.render(scene, camera)
+      }
+      frameId = requestAnimationFrame(animate)
+    } catch (err) {
+      console.warn('[GradientDescent3D] render failed:', err)
+      failed.value = true
+    }
   }
 
   frameId = requestAnimationFrame(animate)
@@ -339,6 +356,19 @@ onBeforeUnmount(() => {
 
 .gd3d-axis-label-orange {
   fill: #c2410c;
+}
+
+.gd3d-fallback {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 20px;
+  color: #64748b;
+  font-size: 13px;
+  text-align: center;
+  background: rgba(248, 250, 252, 0.7);
 }
 
 </style>

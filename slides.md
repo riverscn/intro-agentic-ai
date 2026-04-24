@@ -119,11 +119,11 @@ layout: section
   <video
     src="/images/Walk%20In%20The%20Clouds.mp4"
     controls
-    autoplay
     muted
     loop
     playsinline
     class="w-[760px] max-h-[320px] rounded border border-white/20 object-contain"
+    onloadeddata="this.play().catch(()=>{})"
   ></video>
 </div>
 
